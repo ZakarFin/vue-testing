@@ -5,7 +5,7 @@
                 <a href="#">{{ msg }}</a>
             </li>
               <li v-for="(chan, index) in channels" v-on:click="greet(index, chan.number, $event)">
-                <b>{{ chan.name }}</b>
+                <b>{{ chan.number }} {{ chan.name }}</b>
             </li>
         </ul>
     </div>
@@ -32,7 +32,11 @@ export default {
   methods: {
     greet: function (index, channelNumber, event) {
       // `this` inside methods points to the Vue instance
-      alert('Hello ' + this.channels[index].name + '!');
+
+      // Emit the number value through the input event
+      this.$emit('change', channelNumber);
+
+      // alert('Hello ' + this.channels[index].number + '!');
       // `event` is the native DOM event
       /*
       if (event) {
