@@ -8,12 +8,12 @@
 
 <script>
 export default {
-  name: 'app',
-  data () {
-    return {
-      msg: 'Samin koti'
-    };
-  }
+    name: 'app',
+    data () {
+        return {
+            msg: 'Samin koti'
+        };
+    }
 };
 </script>
 

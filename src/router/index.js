@@ -5,11 +5,11 @@ import VDR from '@/components/VDR';
 Vue.use(Router);
 
 export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'Hello',
-      component: VDR
-    }
-  ]
+    routes: [
+        {
+            path: '/',
+            name: 'Hello',
+            component: VDR
+        }
+    ]
 });

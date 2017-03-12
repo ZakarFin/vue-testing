@@ -18,20 +18,20 @@ import VDRChannelList from '@/components/VDRChannelList';
 import VDREPG from '@/components/VDREPG';
 
 export default {
-  name: 'VDR',
-  data () {
-    return {
-      msg: 'VDR',
-      activeChannel: -1
-    };
-  },
-  methods: {
-    channelChanged: function (channelNumber) {
+    name: 'VDR',
+    data () {
+        return {
+            msg: 'VDR',
+            activeChannel: -1
+        };
+    },
+    methods: {
+        channelChanged: function (channelNumber) {
       // this.$set(VDRChannelList, 'channelNumber', channelNumber);
       // this.$set(this, 'activeChannel', channelNumber);
-      this.activeChannel = channelNumber;
-    }
-  },
-  components: { VDRChannelList, VDREPG }
+            this.activeChannel = channelNumber;
+        }
+    },
+    components: { VDRChannelList, VDREPG }
 };
 </script>

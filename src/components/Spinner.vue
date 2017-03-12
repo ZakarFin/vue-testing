@@ -9,7 +9,7 @@
 <script>
 // http://web-tricks.org/content/how-create-loading-image-using-css-only
 export default {
-  name: 'spinner'
+    name: 'spinner'
 };
 </script>
 

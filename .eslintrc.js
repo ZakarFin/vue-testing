@@ -17,7 +17,7 @@ module.exports = {
   ],
   // add your custom rules here
   'rules': {
-        "indent": ["warn", 2],
+        "indent": ["warn", 4],
       // semicolons
       'semi': ["warn", "always"],
     // allow paren-less arrow functions

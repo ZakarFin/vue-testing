@@ -21,20 +21,20 @@
 <script>
 import 'whatwg-fetch';
 export default {
-  name: 'VDRChannelList',
-  data () {
-    return {
-      msg: 'Kanavat',
-      channels: []
-    };
-  },
+    name: 'VDRChannelList',
+    data () {
+        return {
+            msg: 'Kanavat',
+            channels: []
+        };
+    },
   // define methods under the `methods` object
-  methods: {
-    greet: function (index, channelNumber, event) {
+    methods: {
+        greet: function (index, channelNumber, event) {
       // `this` inside methods points to the Vue instance
 
       // Emit the number value through the input event
-      this.$emit('change', channelNumber);
+            this.$emit('change', channelNumber);
 
       // alert('Hello ' + this.channels[index].number + '!');
       // `event` is the native DOM event
@@ -43,21 +43,21 @@ export default {
         alert(event.target.tagName)
       }
     */
-    }
-  },
-  mounted: function () {
-    var self = this;
-    fetch('http://10.0.0.10/vdr/channels', {
-      method: 'get'
-    }).then(function (response) {
-      return response.json();
-    }).then(function (channelsJSON) {
-      self.channels = channelsJSON;
-    }).catch(function (err) {
+        }
+    },
+    mounted: function () {
+        var self = this;
+        fetch('http://10.0.0.10/vdr/channels', {
+            method: 'get'
+        }).then(function (response) {
+            return response.json();
+        }).then(function (channelsJSON) {
+            self.channels = channelsJSON;
+        }).catch(function (err) {
       // Error :(
-      alert(err);
-    });
-  }
+            alert(err);
+        });
+    }
 };
 </script>
 
