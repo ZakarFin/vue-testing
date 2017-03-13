@@ -1,12 +1,12 @@
 <template>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 v-if="loading" class="panel-title"> <Spinner style="float:left;" />hjelmat </h3>
-            <h3 v-if="!loading" class="panel-title">Ohjelmat</h3>
+            <h3 v-if="loading" class="panel-title"> <Spinner style="float:left;" />hjelmat  {{ channel.name}}</h3>
+            <h3 v-if="!loading" class="panel-title">Ohjelmat {{ channel.name}}</h3>
 
         </div>
         <div class="panel-body">
-            <div v-if="channelNumber === -1">
+            <div v-if="channel.number === -1">
                 <div class="alert alert-danger" role="alert">{{choose_msg}}</div>
             </div>
             <div v-if="error">
@@ -35,21 +35,24 @@ moment.locale('fi');
 export default {
     name: 'VDREPG',
     props: {
-        'channelNumber': {
-            type: Number,
-            default: -1
+        'channel': {
+            type: Object,
+            default: {
+                number: -1,
+                name: ''
+            }
         },
         'timers': Array,
         'baseURL': String
     },
     watch: {
-        channelNumber: function () {
-            if (this.channelNumber === -1) {
+        channel: function () {
+            if (this.channel.number === -1) {
                 this.epg = [];
                 return;
             }
             var self = this;
-            let url = this.baseURL + '/channels/' + this.channelNumber;
+            let url = this.baseURL + '/channels/' + this.channel.number;
             this.loading = true;
             this.error = '';
             fetch(url, {

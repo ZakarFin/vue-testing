@@ -34,7 +34,10 @@ export default {
             // `event` is the native DOM event
 
             // Emit the number value through the input event
-            this.$emit('change', channelNumber);
+            this.$emit('change', {
+                number: channelNumber,
+                name: this.channels[index].name
+            });
         }
     },
     created: function () {

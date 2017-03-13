@@ -12,7 +12,7 @@
             </div>
             <div class="col-md-9">
                 <VDREPG v-bind:baseURL="baseURL"
-                    v-bind:channelNumber="activeChannel"
+                    v-bind:channel="activeChannel"
                     v-bind:timers="timers"
                     @timer-update="updateTimers"/>
             </div>
@@ -31,15 +31,16 @@ export default {
             baseURL: 'http://10.0.0.10/vdr',
             msg: 'VDR',
             timers: [],
-            activeChannel: -1,
+            activeChannel: {
+                number: -1,
+                name: ''
+            },
             error: ''
         };
     },
     methods: {
-        channelChanged: function (channelNumber) {
-      // this.$set(VDRChannelList, 'channelNumber', channelNumber);
-      // this.$set(this, 'activeChannel', channelNumber);
-            this.activeChannel = channelNumber;
+        channelChanged: function (channel) {
+            this.activeChannel = channel;
         },
         // {"channel":"C-0-2-529-0","name":"The Walking Dead (16)","desc":"","startDate":1489435020000,"endDate":1489438980000,"duration":66}
         updateTimers: function () {
