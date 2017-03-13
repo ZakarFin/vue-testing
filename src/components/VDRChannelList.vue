@@ -10,14 +10,6 @@
         </ul>
     </div>
 </template>
-/*{
-  name: 'jee',
-  number: 1
-}, {
-  name: 'moi',
-  number: 2
-}
-*/
 <script>
 import 'whatwg-fetch';
 export default {

@@ -1,10 +1,11 @@
 <template>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">{{ msg }} {{ channelNumber }}</h3>
+            <h3 v-if="loading" class="panel-title"> <Spinner style="float:left;" />hjelmat </h3>
+            <h3 v-if="!loading" class="panel-title">Ohjelmat</h3>
+
         </div>
         <div class="panel-body">
-            <Spinner v-if="loading"/>
             <div v-if="channelNumber === -1">
                 <div class="alert alert-danger" role="alert">{{choose_msg}}</div>
             </div>
@@ -15,8 +16,12 @@
             <ul class="list-group">
               <li v-for="(prog, index) in epg" class="list-group-item">
                   <h4 v-if="shouldPrintDay(index, prog)">{{ prog.day }}</h4>
+                  <span class="badge"><span v-if="prog.hasTimer" class="glyphicon glyphicon-time" aria-hidden="true"></span></span>
                   <b>{{ prog.start }} - {{ prog.end }}</b> {{ prog.name }} <br/>
                   {{ prog.desc }}
+                  <button v-if="!prog.hasTimer" type="button" class="btn btn-default" @click="addTimer(prog)">
+                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span> Ajasta
+                  </button>
               </li>
             </ul>
         </div>
@@ -33,7 +38,8 @@ export default {
         'channelNumber': {
             type: Number,
             default: -1
-        }
+        },
+        'timers': Array
     },
     watch: {
         channelNumber: function () {
@@ -44,6 +50,7 @@ export default {
             var self = this;
             let url = 'http://10.0.0.10/vdr/channels/' + this.channelNumber;
             this.loading = true;
+            this.error = '';
             fetch(url, {
                 method: 'get'
             }).then(function (response) {
@@ -54,28 +61,17 @@ export default {
             }).catch(function (err) {
                 self.epg = [];
                 self.loading = false;
-                alert(err);
+                self.error = 'Ohjelmien lataus epäonnistui';
+                console.warn(err);
             });
-/*
-      return [{
-        name: 'jee',
-        start: 1,
-        end: 2,
-        number: 1,
-        desc: 'sdfasdff'
-      }, {
-        name: 'moi',
-        start: 2,
-        end: 3,
-        number: 2
-      }];
-*/
         }
+        /*
+        {"channel":"C-0-2-65-0","name":"The Voice of Finland","desc":"Kausi 6. Jakso 19/24. Kolmas Knockout-jakso! Tämäniltaisessa tuolileikissä selviää,  ketkä neljä laulajaa Redraman tiimistä jatkavat live-lähetyksiin. Kotimainen viihdeohjelma. (64')                                       ","startDate":1489168800000,"endDate":1489173900000,"duration":85},{"channel":"C-0-2-65-0","name":"Keno","desc":"Illan Keno arvonnan tulokset. Arvonta on suoritettu Poliisihallituksen hyväksymällä arvontajärjestelmällä. Keno arvonnan tulokset myös Veikkauksen sivuilta www.veikkaus.fi. Kotimainen visailuohjelma. (2')                                       ","startDate":1489173900000,"endDate":1489174200000,"duration":5},{"channel":"C-0-2-65-0","name":"Elokuva: Twilight - Aamunkoi, osa 2 (12)","desc":"(Twilight Saga: Breaking Dawn - Part 2 2012). Twilight-fantasiaelokuvasarjan viimeisessä osassa Bella nauttii vampyyrivoimistaan ja roolistaan Renesmee-pienokaisen äitinä. Perheonni kuitenkin järkkyy, kun Vo","startDate":1489174200000,"endDate":1489182600000,"duration":140}
+        */
     },
     data () {
         return {
-            msg: 'Ohjelmat',
-            error: undefined,
+            error: '',
             choose_msg: 'Valitse kanava',
             epg: [],
             loading: false
@@ -89,6 +85,18 @@ export default {
                 prog.start = start.format('HH:mm');
                 prog.end = end.format('HH:mm');
                 prog.day = start.format('dddd (D. MMMM)');
+                prog.hasTimer = false;
+                this.timers.forEach(function (timer) {
+                    if (prog.hasTimer || timer.channel !== prog.channel) {
+                        return;
+                    }
+                    let timerStart = moment(timer.startDate);
+                    let timerEnd = moment(timer.endDate);
+                    prog.hasTimer = timerStart.isSameOrBefore(start) && timerEnd.isSameOrAfter(end);
+                    if (prog.hasTimer) {
+                        console.log(prog.name);
+                    }
+                });
                 return prog;
             });
         },
@@ -97,15 +105,11 @@ export default {
                 return true;
             }
             return this.epg[index - 1].day !== current.day;
+        },
+        addTimer: function (program) {
+            console.log('TODO: add timer for', program);
+            this.$emit('timer-update');
         }
-    },
-    mounted: function () {
-        /*
-        if (this.channelNumber === -1) {
-            this.error = 'Select channel';
-        } else {
-            this.error = undefined;
-        } */
     },
     components: { Spinner }
 };
