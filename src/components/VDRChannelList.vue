@@ -1,6 +1,9 @@
 <template>
     <div>
         <ul class="sidebar-nav">
+            <div v-if="error">
+                <div class="alert alert-danger" role="alert">{{error}}</div>
+            </div>
             <li class="sidebar-brand">
                 <a href="#">{{ msg }}</a>
             </li>
@@ -20,28 +23,23 @@ export default {
     data () {
         return {
             msg: 'Kanavat',
-            channels: []
+            channels: [],
+            error: ''
         };
     },
   // define methods under the `methods` object
     methods: {
         greet: function (index, channelNumber, event) {
-      // `this` inside methods points to the Vue instance
+            // `this` inside methods points to the Vue instance
+            // `event` is the native DOM event
 
-      // Emit the number value through the input event
+            // Emit the number value through the input event
             this.$emit('change', channelNumber);
-
-      // alert('Hello ' + this.channels[index].number + '!');
-      // `event` is the native DOM event
-      /*
-      if (event) {
-        alert(event.target.tagName)
-      }
-    */
         }
     },
     created: function () {
         var self = this;
+        this.error = '';
         fetch(this.baseURL + '/channels', {
             method: 'get'
         }).then(function (response) {
@@ -49,8 +47,8 @@ export default {
         }).then(function (channelsJSON) {
             self.channels = channelsJSON;
         }).catch(function (err) {
-      // Error :(
-            alert(err);
+            self.error = 'Kanavien lataus epäonnistui';
+            console.warn(err);
         });
     }
 };
