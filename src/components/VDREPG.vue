@@ -93,9 +93,6 @@ export default {
                     let timerStart = moment(timer.startDate);
                     let timerEnd = moment(timer.endDate);
                     prog.hasTimer = timerStart.isSameOrBefore(start) && timerEnd.isSameOrAfter(end);
-                    if (prog.hasTimer) {
-                        console.log(prog.name);
-                    }
                 });
                 return prog;
             });
