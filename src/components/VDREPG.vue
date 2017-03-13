@@ -39,7 +39,8 @@ export default {
             type: Number,
             default: -1
         },
-        'timers': Array
+        'timers': Array,
+        'baseURL': String
     },
     watch: {
         channelNumber: function () {
@@ -48,7 +49,7 @@ export default {
                 return;
             }
             var self = this;
-            let url = 'http://10.0.0.10/vdr/channels/' + this.channelNumber;
+            let url = this.baseURL + '/channels/' + this.channelNumber;
             this.loading = true;
             this.error = '';
             fetch(url, {

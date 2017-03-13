@@ -7,10 +7,14 @@
         </div>
         <div class="row">
             <div class="col-md-3">
-                <VDRChannelList @change="channelChanged"/>
+                <VDRChannelList v-bind:baseURL="baseURL"
+                    @change="channelChanged"/>
             </div>
             <div class="col-md-9">
-                <VDREPG v-bind:channelNumber="activeChannel" v-bind:timers="timers" @timer-update="updateTimers"/>
+                <VDREPG v-bind:baseURL="baseURL"
+                    v-bind:channelNumber="activeChannel"
+                    v-bind:timers="timers"
+                    @timer-update="updateTimers"/>
             </div>
         </div>
     </div>
@@ -24,6 +28,7 @@ export default {
     name: 'VDR',
     data () {
         return {
+            baseURL: 'http://10.0.0.10/vdr',
             msg: 'VDR',
             timers: [],
             activeChannel: -1,
@@ -40,7 +45,7 @@ export default {
         updateTimers: function () {
             var self = this;
             self.error = '';
-            fetch('http://10.0.0.10/vdr/timers', {
+            fetch(this.baseURL + '/timers', {
                 method: 'get'
             }).then(function (response) {
                 return response.json();

@@ -14,6 +14,9 @@
 import 'whatwg-fetch';
 export default {
     name: 'VDRChannelList',
+    props: {
+        'baseURL': String
+    },
     data () {
         return {
             msg: 'Kanavat',
@@ -37,9 +40,9 @@ export default {
     */
         }
     },
-    mounted: function () {
+    created: function () {
         var self = this;
-        fetch('http://10.0.0.10/vdr/channels', {
+        fetch(this.baseURL + '/channels', {
             method: 'get'
         }).then(function (response) {
             return response.json();
