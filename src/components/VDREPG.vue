@@ -108,8 +108,28 @@ export default {
             return this.epg[index - 1].day !== current.day;
         },
         addTimer: function (program) {
+            var me = this;
             console.log('TODO: add timer for', program);
-            this.$emit('timer-update');
+            fetch(this.baseURL + '/timers', {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    channel: program.channel,
+                    name: program.name,
+                    startDate: program.startDate,
+                    endDate: program.endDate
+                })
+            })
+            .then(function (res) {
+                console.log(res.json());
+                me.$emit('timer-update');
+            })
+            .catch(function (res) {
+                console.log(res);
+            });
         }
     },
     components: { Spinner }
@@ -120,6 +140,12 @@ export default {
 <style scoped>
 h1, h2 {
   font-weight: normal;
+}
+
+li h4 {
+    background-color: black;
+    color: white;
+    padding: 10px;
 }
 
 a {

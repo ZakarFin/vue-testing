@@ -7,8 +7,8 @@
             <li class="sidebar-brand">
                 <a href="#">{{ msg }}</a>
             </li>
-              <li v-for="(chan, index) in channels" v-on:click="greet(index, chan.number, $event)">
-                <b>{{ chan.number }} {{ chan.name }}</b>
+            <li class="channel" v-for="(chan, index) in channels" v-on:click="greet(index, chan.number, $event)">
+                <b>{{ chan.name }}</b>
             </li>
         </ul>
     </div>
@@ -48,6 +48,11 @@ export default {
         }).then(function (response) {
             return response.json();
         }).then(function (channelsJSON) {
+            /*
+            channelsJSON.sort(function (a, b) {
+                return a.name.localeCompare(b.name);
+            });
+            */
             self.channels = channelsJSON;
         }).catch(function (err) {
             self.error = 'Kanavien lataus epäonnistui';
@@ -71,6 +76,21 @@ ul {
 li {
   //display: inline-block;
   margin: 0 10px;
+}
+
+li.channel {
+    font-size: 14pt;
+    padding: 5px;
+    font-weight: normal;
+}
+li.channel:hover {
+    background-color: black;
+    color: white;
+}
+li.channel:hover::after {
+   content: " >>";
+   font-weight: bold;
+   color: #42b983;
 }
 
 a {
