@@ -11,6 +11,9 @@
                     @change="channelChanged"/>
             </div>
             <div class="col-md-9">
+                <!--
+                <Bus stop="2133210" moi="Pääskyskuja"/>
+                <Bus stop="2133204" moi="Turuntie"/> -->
                 <VDREPG v-bind:baseURL="baseURL"
                     v-bind:channel="activeChannel"
                     v-bind:timers="timers"
@@ -23,6 +26,7 @@
 <script>
 import VDRChannelList from '@/components/VDRChannelList';
 import VDREPG from '@/components/VDREPG';
+import Bus from '@/components/Bus';
 
 export default {
     name: 'VDR',
@@ -63,6 +67,6 @@ export default {
     mounted: function () {
         this.updateTimers();
     },
-    components: { VDRChannelList, VDREPG }
+    components: { VDRChannelList, VDREPG, Bus }
 };
 </script>
