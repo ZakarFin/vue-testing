@@ -26,6 +26,10 @@ import Spinner from '@/components/Spinner';
 import moment from 'moment';
 moment.locale('fi');
 
+// http://www.pubtrans.it
+// pääskyskujan pysäkki 2133210, turuntien 2133204
+// stopnumber can be determined f.ex. in here: http://www.pubtrans.it/hsl/near/
+// Häiriöt: http://www.pubtrans.it/hsl/reittiopas/disruption-api?dt=2015-01-10T16:42:15
 const baseUrl = 'http://www.pubtrans.it/hsl/reittiopas/departure-api?';
 
 export default {
