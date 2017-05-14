@@ -3,11 +3,13 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+// fecth polyfill
+import 'whatwg-fetch';
 
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
-new Vue({
+window.vm = new Vue({
     el: '#app',
     router,
     template: '<App/>',

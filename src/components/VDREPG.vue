@@ -68,10 +68,12 @@ export default {
                 self.error = 'Ohjelmien lataus epäonnistui';
                 console.warn(err);
             });
+        },
+        timers: function () {
+            this.epg = this.epg.map(prog => {
+                return this.updateTimerData(prog);
+            });
         }
-        /*
-        {"channel":"C-0-2-65-0","name":"The Voice of Finland","desc":"Kausi 6. Jakso 19/24. Kolmas Knockout-jakso! Tämäniltaisessa tuolileikissä selviää,  ketkä neljä laulajaa Redraman tiimistä jatkavat live-lähetyksiin. Kotimainen viihdeohjelma. (64')                                       ","startDate":1489168800000,"endDate":1489173900000,"duration":85},{"channel":"C-0-2-65-0","name":"Keno","desc":"Illan Keno arvonnan tulokset. Arvonta on suoritettu Poliisihallituksen hyväksymällä arvontajärjestelmällä. Keno arvonnan tulokset myös Veikkauksen sivuilta www.veikkaus.fi. Kotimainen visailuohjelma. (2')                                       ","startDate":1489173900000,"endDate":1489174200000,"duration":5},{"channel":"C-0-2-65-0","name":"Elokuva: Twilight - Aamunkoi, osa 2 (12)","desc":"(Twilight Saga: Breaking Dawn - Part 2 2012). Twilight-fantasiaelokuvasarjan viimeisessä osassa Bella nauttii vampyyrivoimistaan ja roolistaan Renesmee-pienokaisen äitinä. Perheonni kuitenkin järkkyy, kun Vo","startDate":1489174200000,"endDate":1489182600000,"duration":140}
-        */
     },
     data () {
         return {
@@ -82,24 +84,30 @@ export default {
         };
     },
     methods: {
+    /*
+    {"channel":"C-0-2-65-0","name":"The Voice of Finland","desc":"Kausi 6. Jakso 19/24. Kolmas Knockout-jakso! Tämäniltaisessa tuolileikissä selviää,  ketkä neljä laulajaa Redraman tiimistä jatkavat live-lähetyksiin. Kotimainen viihdeohjelma. (64')                                       ","startDate":1489168800000,"endDate":1489173900000,"duration":85},{"channel":"C-0-2-65-0","name":"Keno","desc":"Illan Keno arvonnan tulokset. Arvonta on suoritettu Poliisihallituksen hyväksymällä arvontajärjestelmällä. Keno arvonnan tulokset myös Veikkauksen sivuilta www.veikkaus.fi. Kotimainen visailuohjelma. (2')                                       ","startDate":1489173900000,"endDate":1489174200000,"duration":5},{"channel":"C-0-2-65-0","name":"Elokuva: Twilight - Aamunkoi, osa 2 (12)","desc":"(Twilight Saga: Breaking Dawn - Part 2 2012). Twilight-fantasiaelokuvasarjan viimeisessä osassa Bella nauttii vampyyrivoimistaan ja roolistaan Renesmee-pienokaisen äitinä. Perheonni kuitenkin järkkyy, kun Vo","startDate":1489174200000,"endDate":1489182600000,"duration":140}
+    */
         processEPG: function (epg) {
             return epg.map(prog => {
-                let start = moment(prog.startDate);
-                let end = moment(prog.endDate);
-                prog.start = start.format('HH:mm');
-                prog.end = end.format('HH:mm');
-                prog.day = start.format('dddd (D. MMMM)');
-                prog.hasTimer = false;
-                this.timers.forEach(function (timer) {
-                    if (prog.hasTimer || timer.channel !== prog.channel) {
-                        return;
-                    }
-                    let timerStart = moment(timer.startDate);
-                    let timerEnd = moment(timer.endDate);
-                    prog.hasTimer = timerStart.isSameOrBefore(start) && timerEnd.isSameOrAfter(end);
-                });
-                return prog;
+                prog.startDate = moment(prog.startDate);
+                prog.endDate = moment(prog.endDate);
+                prog.start = prog.startDate.format('HH:mm');
+                prog.end = prog.endDate.format('HH:mm');
+                prog.day = prog.startDate.format('dddd (D. MMMM)');
+                return this.updateTimerData(prog);
             });
+        },
+        updateTimerData: function (prog) {
+            prog.hasTimer = false;
+            this.timers.forEach(function (timer) {
+                if (prog.hasTimer || timer.channel !== prog.channel) {
+                    return;
+                }
+                let timerStart = moment(timer.startDate);
+                let timerEnd = moment(timer.endDate);
+                prog.hasTimer = timerStart.isSameOrBefore(prog.startDate) && timerEnd.isSameOrAfter(prog.endDate);
+            });
+            return prog;
         },
         shouldPrintDay: function (index, current) {
             if (index === 0) {
@@ -109,7 +117,7 @@ export default {
         },
         addTimer: function (program) {
             var me = this;
-            console.log('TODO: add timer for', program);
+            console.log('adding timer for', program);
             fetch(this.baseURL + '/timers', {
                 headers: {
                     'Accept': 'application/json',
@@ -126,9 +134,12 @@ export default {
             .then(function (res) {
                 console.log(res.json());
                 me.$emit('timer-update');
+                // http://codeseven.github.io/toastr/demo.html
+                window.toastr.info('Ohjelman tallennus ajastettu');
             })
             .catch(function (res) {
                 console.log(res);
+                window.toastr.error('Virhe ajastuksessa, yritä uudelleen!');
             });
         }
     },
