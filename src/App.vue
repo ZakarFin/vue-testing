@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-      <h1>{{ msg }}</h1>
     <!--img src="./assets/logo.png" -->
       <router-view></router-view>
   </div>
@@ -8,12 +7,7 @@
 
 <script>
 export default {
-    name: 'app',
-    data () {
-        return {
-            msg: 'Samin koti'
-        };
-    }
+    name: 'app'
 };
 </script>
 
