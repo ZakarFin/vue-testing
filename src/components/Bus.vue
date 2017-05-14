@@ -22,6 +22,8 @@
 </template>
 
 <script>
+// https://alligator.io/vuejs/using-bootstrap4/
+// https://vuejs.org/v2/guide/components.html#Non-Parent-Child-Communication
 import Spinner from '@/components/Spinner';
 import moment from 'moment';
 moment.locale('fi');
