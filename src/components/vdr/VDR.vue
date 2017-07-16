@@ -6,14 +6,11 @@
             <div class="alert alert-danger" role="alert">{{error}}</div>
         </div>
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-sm-3">
                 <VDRChannelList v-bind:baseURL="baseURL"
                     @change="channelChanged"/>
             </div>
-            <div class="col-md-9">
-                <!--
-                <Bus stop="2133210" moi="Pääskyskuja"/>
-                <Bus stop="2133204" moi="Turuntie"/> -->
+            <div class="col-sm-9">
                 <VDREPG v-bind:baseURL="baseURL"
                     v-bind:channel="activeChannel"
                     v-bind:timers="timers"
@@ -24,9 +21,9 @@
 </template>
 
 <script>
-import VDRChannelList from '@/components/VDRChannelList';
-import VDREPG from '@/components/VDREPG';
-import Bus from '@/components/Bus';
+import VDRChannelList from '@/components/vdr/VDRChannelList';
+import VDREPG from '@/components/vdr/VDREPG';
+import VDR from './vdrservice';
 
 export default {
     name: 'VDR',
@@ -50,23 +47,21 @@ export default {
         updateTimers: function () {
             var self = this;
             self.error = '';
-            fetch(this.baseURL + '/timers', {
-                method: 'get'
-            }).then(function (response) {
-                return response.json();
-            }).then(function (json) {
-                self.timers = json;
-            }).catch(function (err) {
-                self.timers = [];
-                self.error = 'Unable to load timers';
-                console.warn(err);
-            });
+
+            VDR.getTimers()
+                .then(timers => {
+                    self.timers = timers;
+                })
+                .catch(err => {
+                    self.timers = [];
+                    self.error = err;
+                });
         }
 
     },
     mounted: function () {
         this.updateTimers();
     },
-    components: { VDRChannelList, VDREPG, Bus }
+    components: { VDRChannelList, VDREPG }
 };
 </script>

@@ -7,13 +7,15 @@
             <li class="sidebar-brand">
                 <a href="#">{{ msg }}</a>
             </li>
-            <li class="channel" v-for="(chan, index) in channels" v-on:click="greet(index, chan.number, $event)">
+            <li class="channel" v-for="(chan, index) in channels" v-on:click="greet(index, chan.number, $event)"
+             v-bind:class="{ active: chan.number == selected }">
                 <b>{{ chan.name }}</b>
             </li>
         </ul>
     </div>
 </template>
 <script>
+import VDR from './vdrservice';
 export default {
     name: 'VDRChannelList',
     props: {
@@ -23,6 +25,7 @@ export default {
         return {
             msg: 'Kanavat',
             channels: [],
+            selected: -1,
             error: ''
         };
     },
@@ -31,6 +34,7 @@ export default {
         greet: function (index, channelNumber, event) {
             // `this` inside methods points to the Vue instance
             // `event` is the native DOM event
+            this.selected = channelNumber;
 
             // Emit the number value through the input event
             this.$emit('change', {
@@ -42,21 +46,14 @@ export default {
     created: function () {
         var self = this;
         this.error = '';
-        fetch(this.baseURL + '/channels', {
-            method: 'get'
-        }).then(function (response) {
-            return response.json();
-        }).then(function (channelsJSON) {
-            /*
-            channelsJSON.sort(function (a, b) {
-                return a.name.localeCompare(b.name);
+        VDR.getChannels()
+            .then(channels => {
+                self.channels = channels;
+            })
+            .catch(err => {
+                self.channels = [];
+                self.error = err;
             });
-            */
-            self.channels = channelsJSON;
-        }).catch(function (err) {
-            self.error = 'Kanavien lataus epäonnistui';
-            console.warn(err);
-        });
     }
 };
 </script>
@@ -82,7 +79,7 @@ li.channel {
     padding: 5px;
     font-weight: normal;
 }
-li.channel:hover {
+li.channel:hover, li.channel.active {
     background-color: black;
     color: white;
 }

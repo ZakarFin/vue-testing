@@ -30,6 +30,7 @@
 
 <script>
 import Spinner from '@/components/Spinner';
+import VDR from './vdrservice';
 import moment from 'moment';
 moment.locale('fi');
 export default {
@@ -117,30 +118,15 @@ export default {
         },
         addTimer: function (program) {
             var me = this;
-            console.log('adding timer for', program);
-            fetch(this.baseURL + '/timers', {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST',
-                body: JSON.stringify({
-                    channel: program.channel,
-                    name: program.name,
-                    startDate: program.startDate,
-                    endDate: program.endDate
+            VDR.addTimer(program)
+                .then(() => {
+                    me.$emit('timer-update');
+                    // http://codeseven.github.io/toastr/demo.html
+                    window.toastr.info('Ohjelman tallennus ajastettu');
                 })
-            })
-            .then(function (res) {
-                console.log(res.json());
-                me.$emit('timer-update');
-                // http://codeseven.github.io/toastr/demo.html
-                window.toastr.info('Ohjelman tallennus ajastettu');
-            })
-            .catch(function (res) {
-                console.log(res);
-                window.toastr.error('Virhe ajastuksessa, yritä uudelleen!');
-            });
+                .catch(err => {
+                    window.toastr.error(err);
+                });
         }
     },
     components: { Spinner }

@@ -1,9 +1,9 @@
 <template>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Bussit
-                <span v-if="loading"><Spinner style="float:right;"/></span>
-                <span v-if="!loading">{{stopName}}</span>
+            <h3 class="panel-title">
+                <span v-if="loading">Bussit <Spinner style="float:right;"/></span>
+                <span v-if="!loading">{{name}}</span>
             </h3>
         </div>
         <div class="panel-body">
@@ -38,6 +38,7 @@ export default {
     name: 'Bus',
     props: {
         'stop': String,
+        'name': String,
         'count': {
             type: Number,
             default: 5
@@ -47,7 +48,6 @@ export default {
         return {
             timer: null,
             error: '',
-            stopName: '',
             busses: [],
             loading: false
         };
@@ -75,8 +75,8 @@ export default {
                 return response.json();
             }).then(function (json) {
                 self.busses = self.processData(json);
-                if (self.busses.length) {
-                    self.stopName = self.busses[0].stopname;
+                if (self.busses.length && !self.name) {
+                    self.name = self.busses[0].stopname;
                 }
                 self.loading = false;
                 clearTimeout(self.timer);
