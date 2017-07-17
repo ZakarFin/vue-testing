@@ -6,8 +6,8 @@
             <div class="alert alert-danger" role="alert">{{error}}</div>
         </div>
         <div class="row">
-            <div class="col-sm-4" v-for="sensor in sensors">
-                {{latest.time}} - {{sensor}}: {{latest.values[sensor]}}
+            <div class="col-sm-4" v-for="sensor in values">
+                {{sensor.time}} - {{sensor.name}}: {{sensor.value}}
                 <hr />
                 {{latest}}
             </div>
@@ -33,13 +33,37 @@ export default {
         return {
             msg: 'Lämpötila',
             error: '',
-            latest: temperature.getLatest(),
+            values: [],
             sensors: [VARASTO, YLAKERTA, TERASSI]
         };
     },
     watch: {
-        latest () {
-            return this.latest;
+        values () {
+            var joo = this.sensors.map((name) => {
+                var data = this.getLatest(name);
+                return {
+                    name,
+                    time: data.time,
+                    value: data.value
+                };
+            });
+            return joo;
+        }
+    },
+    methods: {
+        getLatest (name) {
+            return temperature.getLatest(name);
+        },
+        updateValues () {
+            this.values = this.sensors.map((name) => {
+                var data = this.getLatest(name);
+                console.log(name, data);
+                return {
+                    name,
+                    time: data.time,
+                    value: data.value
+                };
+            });
         }
     },
     created () {
@@ -48,7 +72,9 @@ export default {
         socket.on('temp', function (msg) {
             temperature.addReading(msg.time, VARASTO, msg[VARASTO]);
             temperature.addReading(msg.time, YLAKERTA, msg[YLAKERTA]);
-            me.latest = temperature.addReading(msg.time, TERASSI, msg[TERASSI]);
+            temperature.addReading(msg.time, TERASSI, msg[TERASSI]);
+            me.updateValues();
+            // TODO: force update
         });
     },
     destroyed () {

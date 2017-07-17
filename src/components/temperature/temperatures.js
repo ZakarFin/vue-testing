@@ -1,36 +1,40 @@
-let readings = [];
+let readings = {};
 const MAX_VALUES = 50;
 
 function addReading (ts, name, value) {
     var node = getTemplate(ts);
-    if (readings.length) {
-        let latest = readings.pop();
+    if (!value) {
+        return node;
+    }
+    if (!readings[name]) {
+        readings[name] = [];
+    }
+    if (readings[name].length) {
+        let latest = readings[name].pop();
         if (latest.time === node.time) {
             node = latest;
         }
     }
-    if (value) {
-        node.values[name] = value;
-    }
-    readings.push(node);
-    if (readings.length > MAX_VALUES) {
-        readings.shift();
+    node.value = value;
+    readings[name].push(node);
+    if (readings[name].length > MAX_VALUES) {
+        readings[name].shift();
     }
     return node;
 }
 
-function getLatest () {
-    if (readings.length) {
-        return readings[readings.length - 1];
+function getLatest (name) {
+    let values = readings[name] || [];
+    if (values.length) {
+        return values[values.length - 1];
     }
     return getTemplate();
 }
 
 function getTemplate (time) {
-    time = time || getTime();
     return {
-        time,
-        values: {}
+        time: time || getTime(),
+        value: ''
     };
 }
 
