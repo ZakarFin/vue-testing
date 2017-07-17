@@ -4,6 +4,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import App from './App';
 import routes from './routes';
+import store from './store';
 // fecth polyfill
 import 'whatwg-fetch';
 
@@ -17,6 +18,7 @@ window.vm = new Vue({
     router: new Router({
         routes
     }),
+    store,
     template: '<App/>',
     components: { App }
 });
