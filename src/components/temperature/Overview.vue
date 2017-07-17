@@ -6,10 +6,12 @@
             <div class="alert alert-danger" role="alert">{{error}}</div>
         </div>
         <div class="row">
-            <div class="col-sm-4" v-for="sensor in values">
-                {{sensor.time}} - {{sensor.name}}: {{sensor.value}}
-                <hr />
-                {{latest}}
+            <div class="col-sm-4">
+                <ul>
+                    <li v-for="sensor in values">
+                        {{sensor.time}} - {{sensor.name}}: {{sensor.value}}&deg;C
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -37,27 +39,10 @@ export default {
             sensors: [VARASTO, YLAKERTA, TERASSI]
         };
     },
-    watch: {
-        values () {
-            var joo = this.sensors.map((name) => {
-                var data = this.getLatest(name);
-                return {
-                    name,
-                    time: data.time,
-                    value: data.value
-                };
-            });
-            return joo;
-        }
-    },
     methods: {
-        getLatest (name) {
-            return temperature.getLatest(name);
-        },
         updateValues () {
             this.values = this.sensors.map((name) => {
-                var data = this.getLatest(name);
-                console.log(name, data);
+                var data = temperature.getLatest(name);
                 return {
                     name,
                     time: data.time,
@@ -74,7 +59,6 @@ export default {
             temperature.addReading(msg.time, YLAKERTA, msg[YLAKERTA]);
             temperature.addReading(msg.time, TERASSI, msg[TERASSI]);
             me.updateValues();
-            // TODO: force update
         });
     },
     destroyed () {
