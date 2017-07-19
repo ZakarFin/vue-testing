@@ -6,11 +6,11 @@
             <div class="alert alert-danger" role="alert">{{error}}</div>
         </div>
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-xs-3">
                 <VDRChannelList v-bind:baseURL="baseURL"
                     @change="channelChanged"/>
             </div>
-            <div class="col-sm-9">
+            <div class="col-xs-9">
                 <VDREPG v-bind:baseURL="baseURL"
                     v-bind:channel="activeChannel"
                     v-bind:timers="timers"

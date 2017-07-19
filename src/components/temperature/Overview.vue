@@ -1,19 +1,18 @@
 
 <template>
-    <div class="nearstops">
-        <h2>{{ msg }}</h2>
-        <div v-if="error">
-            <div class="alert alert-danger" role="alert">{{error}}</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
-                <ul>
-                    <li v-for="sensor in values">
-                        {{sensor.time}} - {{sensor.name}}: {{sensor.value}}&deg;C
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div class="jumbotron temperature">
+          <h2>{{ msg }}</h2>
+              <div class="row">
+                  <div class="col-xs-4" v-for="sensor in values">
+                      <div class="panel panel-default">
+                        <div class="panel-body">
+                            <small style="float:right;">{{sensor.time}}</small>
+                            <h3>{{sensor.value}}&deg;C</h3>
+                        </div>
+                        <div class="panel-footer">{{sensor.name}}</div>
+                      </div>
+                  </div>
+              </div>
     </div>
 </template>
 
@@ -22,19 +21,17 @@
 import temperature from './temperatures';
 import io from 'socket.io-client';
 
-// socket.emit('news', { hello: 'world' });
-var socket = null;
-
 const VARASTO = 'Varasto';
 const YLAKERTA = 'Yläkerta';
 const TERASSI = 'Terassi';
+
+var socket = null;
 
 export default {
     name: 'temperature-overview',
     data () {
         return {
             msg: 'Lämpötila',
-            error: '',
             values: [],
             sensors: [VARASTO, YLAKERTA, TERASSI]
         };
@@ -68,3 +65,14 @@ export default {
     }
 };
 </script>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+h2 {
+    padding: 0px;
+    margin: 0px;
+}
+
+.jumbotron {
+    padding: 10px;
+}
+</style>

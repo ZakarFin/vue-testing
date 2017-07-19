@@ -1,11 +1,11 @@
 
 <template>
     <div class="home">
-        <h2>{{ msg }}</h2>
         <div v-if="error">
             <div class="alert alert-danger" role="alert">{{error}}</div>
         </div>
         <temperature-overview />
+        <NearStops />
         <div class="row">
             <div class="col-md-3" v-for="app in apps">
                 <router-link :to="app.path">{{ app.name }}</router-link>
@@ -16,6 +16,7 @@
 <script>
 import {getApps} from '../routes';
 import TemperatureOverview from '@/components/temperature/Overview';
+import NearStops from '@/components/bus/NearStops';
 
 export default {
     name: 'Index',
@@ -26,6 +27,6 @@ export default {
             error: ''
         };
     },
-    components: { TemperatureOverview }
+    components: { TemperatureOverview, NearStops }
 };
 </script>

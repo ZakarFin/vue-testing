@@ -6,10 +6,10 @@
             <div class="alert alert-danger" role="alert">{{error}}</div>
         </div>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-xs-6">
                 <Bus stop="2133210" name="Pääskyskuja"/>
             </div>
-            <div class="col-md-6">
+            <div class="col-xs-6">
                 <Bus stop="2133204" name="Turuntie"/>
             </div>
         </div>
