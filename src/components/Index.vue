@@ -6,11 +6,11 @@
         </div>
         <temperature-overview />
         <NearStops />
-        <div class="row">
+        <!-- div class="row">
             <div class="col-md-3" v-for="app in apps">
                 <router-link :to="app.path">{{ app.name }}</router-link>
             </div>
-        </div>
+        </div -->
     </div>
 </template>
 <script>
