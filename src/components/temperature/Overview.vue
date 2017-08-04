@@ -33,7 +33,7 @@ export default {
         return {
             msg: 'Lämpötila',
             values: [],
-            sensors: [VARASTO, YLAKERTA, TERASSI]
+            sensors: [VARASTO, TERASSI, YLAKERTA]
         };
     },
     methods: {
@@ -52,9 +52,9 @@ export default {
         var me = this;
         var socket = io('http://10.0.0.14:3000');
         socket.on('temp', function (msg) {
-            temperature.addReading(msg.time, VARASTO, msg[VARASTO]);
-            temperature.addReading(msg.time, YLAKERTA, msg[YLAKERTA]);
-            temperature.addReading(msg.time, TERASSI, msg[TERASSI]);
+            me.sensors.forEach((sensor) => {
+                temperature.addReading(msg.time, sensor, msg[sensor]);
+            });
             me.updateValues();
         });
     },
@@ -74,5 +74,10 @@ h2 {
 
 .jumbotron {
     padding: 10px;
+}
+/* We get sideways scrolls without this */
+.row {
+    margin-left: initial;
+    margin-right: initial;
 }
 </style>

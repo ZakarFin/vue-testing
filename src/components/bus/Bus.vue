@@ -4,6 +4,7 @@
             <h3 class="panel-title">
                 <span v-if="loading">Bussit <Spinner style="float:right;"/></span>
                 <span v-if="!loading">{{name}}</span>
+                <span v-if="url"><a :href="url" target="_blank" class="glyphicon glyphicon-time" style="float:right;"></a></span>
             </h3>
         </div>
         <div class="panel-body">
@@ -28,17 +29,44 @@ import Spinner from '@/components/Spinner';
 import moment from 'moment';
 moment.locale('fi');
 
-// http://www.pubtrans.it
 // pääskyskujan pysäkki 2133210, turuntien 2133204
-// stopnumber can be determined f.ex. in here: http://www.pubtrans.it/hsl/near/
-// Häiriöt: http://www.pubtrans.it/hsl/reittiopas/disruption-api?dt=2015-01-10T16:42:15
-const baseUrl = 'http://www.pubtrans.it/hsl/reittiopas/departure-api?';
+const baseUrl = 'https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql';
+function getPayload (stop, date) {
+    return `{
+      stop(id: "HSL:${stop}") {
+        name
+        lat
+        lon
+        url
+        stoptimesForServiceDate(date:"${date}") {
+          pattern {
+            name
+            route {
+              shortName
+            }
+          }
+          stoptimes {
+            serviceDay
+            scheduledDeparture
+            realtimeDeparture
+            trip {
+              serviceId
+              alerts {
+                alertHeaderText
+              }
+            }
+          }
+        }
+      }
+  }`;
+}
 
 export default {
     name: 'Bus',
     props: {
         'stop': String,
         'name': String,
+        'url': String,
         'count': {
             type: Number,
             default: 5
@@ -49,7 +77,8 @@ export default {
             timer: null,
             error: '',
             busses: [],
-            loading: false
+            loading: false,
+            msg: getPayload()
         };
     },
     created () {
@@ -61,23 +90,26 @@ export default {
                 this.error = 'Pysäkki puuttuu';
                 return;
             }
-            const url = baseUrl +
-                'stops[]=' + this.stop +
-                '&time=' + moment().format('YYYY-MM-DDTHH:mm:ss') +
-                '&max=' + this.count;
-
             var self = this;
             this.loading = true;
             this.error = '';
-            fetch(url, {
-                method: 'get'
+
+            fetch(baseUrl, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                method: 'POST',
+                body: getPayload(this.stop, moment().format('YYYYMMDD'))
             }).then(function (response) {
                 return response.json();
             }).then(function (json) {
-                self.busses = self.processData(json);
-                if (self.busses.length && !self.name) {
-                    self.name = self.busses[0].stopname;
+                const data = json.data.stop;
+                // console.log(data);
+                if (!self.name) {
+                    self.name = data.name;
                 }
+                self.url = data.url;
+                self.busses = self.processData(data.stoptimesForServiceDate);
                 self.loading = false;
                 clearTimeout(self.timer);
                 self.timer = setTimeout(self.getSchedule, 60000);
@@ -91,20 +123,28 @@ export default {
             });
         },
         processData (json) {
-            return json.map(value => {
-                var datVal = new Date((value.rtime || value.time) * 1000);
-                if (datVal.getTime() > new Date().getTime() + 43200000) {
-                    // api failure giving next days schedule if happening "right now", checking for +12h
-                    return;
-                }
-                var date = moment(datVal);
-                return {
-                    line: value.line,
-                    info: value.info,
-                    time: date.format('H:mm'),
-                    until: date.fromNow()
-                };
+            let times = [];
+            json.forEach(value => {
+                const line = value.pattern.route.shortName;
+                value.stoptimes.forEach(stopTime => {
+                    // times in seconds so multiple by 1000 for ms
+                    let datVal = new Date((stopTime.serviceDay + stopTime.realtimeDeparture) * 1000);
+                    if (datVal.getTime() < new Date().getTime()) {
+                        return;
+                    }
+                    const date = moment(datVal);
+                    const bus = {
+                        line,
+                        info: stopTime.trip.alerts.join(),
+                        time: date.format('H:mm'),
+                        until: date.fromNow(),
+                        ts: datVal.getTime()
+                    };
+                    times.push(bus);
+                });
             });
+            times.sort((a, b) => a.ts - b.ts);
+            return times.slice(0, this.count);
         }
     },
     components: { Spinner }

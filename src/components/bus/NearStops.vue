@@ -30,3 +30,9 @@ export default {
     components: { Bus }
 };
 </script>
+<style scoped>
+.row {
+    margin-left:initial;
+    margin-right:initial;
+}
+</style>
