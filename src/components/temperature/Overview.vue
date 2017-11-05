@@ -6,8 +6,12 @@
                   <div class="col-xs-4" v-for="sensor in values">
                       <div class="panel panel-default">
                         <div class="panel-body">
-                            <small style="float:right;">{{sensor.time}}</small>
-                            <h3>{{sensor.value}}&deg;C</h3>
+                            <small style="float:right;">
+                                {{sensor.time}} 
+                                <span v-if="sensor.fromLastUpdate > 15" class="glyphicon glyphicon-exclamation-sign"></span>
+                                <span v-if="sensor.fromLastUpdate > 60" style="color:red" class="glyphicon glyphicon-exclamation-sign"></span>
+                            </small>
+                            <h3>{{sensor.value}}&deg;C </h3>
                         </div>
                         <div class="panel-footer">{{sensor.name}}</div>
                       </div>
@@ -20,6 +24,7 @@
 
 import temperature from './temperatures';
 import io from 'socket.io-client';
+import moment from 'moment';
 
 const VARASTO = 'Varasto';
 const YLAKERTA = 'Yläkerta';
@@ -40,8 +45,10 @@ export default {
         updateValues () {
             this.values = this.sensors.map((name) => {
                 var data = temperature.getLatest(name);
+                var latestTime = moment(data.time || moment(), 'hh:mm');
                 return {
                     name,
+                    fromLastUpdate: moment().diff(latestTime, 'minutes'),
                     time: data.time,
                     value: data.value
                 };

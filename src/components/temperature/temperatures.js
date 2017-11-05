@@ -3,7 +3,7 @@ const MAX_VALUES = 50;
 
 function addReading (ts, name, value) {
     var node = getTemplate(ts);
-    if (!value) {
+    if (typeof value !== 'number') {
         return node;
     }
     if (!readings[name]) {
