@@ -2,6 +2,7 @@
 import Home from '@/components/Index';
 import VDR from '@/components/vdr/VDR';
 import NearStops from '@/components/bus/NearStops';
+import LightListing from '@/components/lights/Lightlist';
 
 const routes = [
     {
@@ -18,6 +19,11 @@ const routes = [
         path: '/bus',
         name: 'Bussit',
         component: NearStops
+    },
+    {
+        path: '/lights',
+        name: 'Valot',
+        component: LightListing
     }
 ];
 

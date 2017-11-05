@@ -37,7 +37,6 @@ function addTimer (program) {
             })
         })
         .then(function (res) {
-            console.log(res.json());
             resolve(res.json());
         })
         .catch(function (res) {
