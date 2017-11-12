@@ -6,17 +6,14 @@
         </div>
         <temperature-overview />
         <NearStops />
-        <!-- div class="row">
-            <div class="col-md-3" v-for="app in apps">
-                <router-link :to="app.path">{{ app.name }}</router-link>
-            </div>
-        </div -->
+        <Lightlist />
     </div>
 </template>
 <script>
 import {getApps} from '../routes';
 import TemperatureOverview from '@/components/temperature/Overview';
 import NearStops from '@/components/bus/NearStops';
+import Lightlist from '@/components/lights/Lightlist';
 
 export default {
     name: 'Index',
@@ -27,6 +24,6 @@ export default {
             error: ''
         };
     },
-    components: { TemperatureOverview, NearStops }
+    components: { TemperatureOverview, NearStops, Lightlist }
 };
 </script>
