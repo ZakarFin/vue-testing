@@ -7,6 +7,26 @@ export default {
 };
 const baseURL = 'http://10.0.0.10/vdr';
 
+const preferredOrder = [
+    'Yle TV1 HD',
+    'Yle TV2 HD',
+    'MTV3 HD',
+    'Nelonen HD',
+    'Yle Teema & Fem HD',
+    'Sub HD',
+    'TV5',
+    'Liv',
+    'Jim',
+    'Kutonen',
+    'TLC Finland',
+    'FOX',
+    'AVA HD',
+    'Hero',
+    'Frii',
+    'National Geographic',
+    'MTV Finland'
+];
+
 // {"channel":"C-0-2-529-0","name":"The Walking Dead (16)","desc":"","startDate":1489435020000,"endDate":1489438980000,"duration":66}
 function getTimers () {
     return new Promise((resolve, reject) => {
@@ -50,10 +70,34 @@ function getChannels () {
         fetch(baseURL + '/channels', {
             method: 'get'
         }).then(response => {
-            resolve(response.json());
+            resolve(response.json().then(sortChannels));
         }).catch(err => {
             console.warn(err);
             reject('Kanavien lataus epäonnistui');
         });
+    });
+}
+
+function sortChannels (channels) {
+    return new Promise((resolve, reject) => {
+        channels.sort((a, b) => {
+            let aIndex = preferredOrder.indexOf(a.name);
+            let bIndex = preferredOrder.indexOf(b.name);
+            if (aIndex !== -1 && bIndex === -1) {
+                // a present, b not
+                return -1;
+            }
+            if (bIndex !== -1 && aIndex === -1) {
+                // b present, a not
+                return 1;
+            }
+            if (bIndex + aIndex === -2) {
+                // both missing
+                return a.name.localeCompare(b.name);
+            }
+            // both present
+            return -(bIndex - aIndex);
+        });
+        resolve(channels);
     });
 }
