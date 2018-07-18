@@ -1,5 +1,7 @@
 
 import Promise from 'bluebird';
+
+const baseURL = 'http://10.0.0.10/vdr';
 export default {
     baseURL,
     getTimers,
@@ -7,7 +9,6 @@ export default {
     addTimer,
     removeTimer
 };
-const baseURL = 'http://10.0.0.10/vdr';
 
 const preferredOrder = [
     'Yle TV1 HD',
