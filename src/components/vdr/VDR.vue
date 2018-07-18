@@ -7,12 +7,16 @@
         </div>
         <div class="row">
             <div class="col-xs-3">
-                <VDRChannelList v-bind:baseURL="baseURL"
+                <VDRChannelList
                     @change="channelChanged"/>
             </div>
             <div class="col-xs-9">
-                <VDREPG v-bind:baseURL="baseURL"
+                <VDREPG
                     v-bind:channel="activeChannel"
+                    v-bind:timers="timers"
+                    @timer-update="updateTimers"/>
+                <hr />
+                <VDRTimers 
                     v-bind:timers="timers"
                     @timer-update="updateTimers"/>
             </div>
@@ -23,13 +27,13 @@
 <script>
 import VDRChannelList from '@/components/vdr/VDRChannelList';
 import VDREPG from '@/components/vdr/VDREPG';
+import VDRTimers from '@/components/vdr/VDRTimers';
 import VDR from './vdrservice';
 
 export default {
     name: 'VDR',
     data () {
         return {
-            baseURL: 'http://10.0.0.10/vdr',
             msg: 'VDR',
             timers: [],
             activeChannel: {
@@ -62,6 +66,6 @@ export default {
     mounted: function () {
         this.updateTimers();
     },
-    components: { VDRChannelList, VDREPG }
+    components: { VDRChannelList, VDREPG, VDRTimers }
 };
 </script>

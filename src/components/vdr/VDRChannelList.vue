@@ -18,9 +18,6 @@
 import VDR from './vdrservice';
 export default {
     name: 'VDRChannelList',
-    props: {
-        'baseURL': String
-    },
     data () {
         return {
             msg: 'Kanavat',
@@ -70,7 +67,6 @@ ul {
 }
 
 li {
-  //display: inline-block;
   margin: 0 10px;
 }
 

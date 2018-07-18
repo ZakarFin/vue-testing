@@ -1,6 +1,7 @@
 
 import Promise from 'bluebird';
 export default {
+    baseURL,
     getTimers,
     getChannels,
     addTimer,
