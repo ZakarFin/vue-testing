@@ -3,7 +3,8 @@ import Promise from 'bluebird';
 export default {
     getTimers,
     getChannels,
-    addTimer
+    addTimer,
+    removeTimer
 };
 const baseURL = 'http://10.0.0.10/vdr';
 
@@ -14,15 +15,15 @@ const preferredOrder = [
     'Nelonen HD',
     'Yle Teema & Fem HD',
     'Sub HD',
-    'TV5',
+    'TV5 HD',
     'Liv',
     'Jim',
-    'Kutonen',
+    'Kutonen HD',
     'TLC Finland',
     'FOX',
     'AVA HD',
     'Hero',
-    'Frii',
+    'Frii HD',
     'National Geographic',
     'MTV Finland'
 ];
@@ -65,6 +66,12 @@ function addTimer (program) {
         });
     });
 }
+function removeTimer (program) {
+    return new Promise((resolve, reject) => {
+        reject('Not implemented yet');
+    });
+}
+
 function getChannels () {
     return new Promise((resolve, reject) => {
         fetch(baseURL + '/channels', {
@@ -98,6 +105,9 @@ function sortChannels (channels) {
             // both present
             return -(bIndex - aIndex);
         });
-        resolve(channels);
+        let validChannels = channels
+            .filter(c => c.name.indexOf('OBSOLETE') === -1)
+            .filter(c => c.name.indexOf('Testi') === -1);
+        resolve(validChannels);
     });
 }
